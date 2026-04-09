@@ -1,15 +1,32 @@
-import Head from 'next/head';
-import Button from '@mui/material/Button';
+import PropTypes from 'prop-types';
 
-const Index = () => (
+import Head from 'next/head';
+
+const propTypes = {
+  user: PropTypes.shape({
+    displayName: PropTypes.string,
+    email: PropTypes.string.isRequired,
+  }),
+};
+
+const defaultProps = {
+  user: null,
+};
+
+const Index = ({ user }) => (
   <div style={{ padding: '10px 45px' }}>
     <Head>
-      <title>Index page</title>
+      <title>Dashboard</title>
       <meta name="description" content="This is the description of the Index page" />
     </Head>
     <p>Content on Index page</p>
-    <Button variant="contained">MUI button</Button>
+    <p>Email: {user.email}</p>
   </div>
 );
+
+Index.getInitialProps = async (ctx) => ({ user: JSON.parse(ctx.query.user) });
+
+Index.propTypes = propTypes;
+Index.defaultProps = defaultProps;
 
 export default Index;
