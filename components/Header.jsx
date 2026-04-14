@@ -30,7 +30,7 @@ const defaultProps = {
   user: null,
 };
 
-function Header({ user }) {
+const Header = ({ user }) => {
   return (
     <div>
       <Toolbar style={styleToolbar}>
@@ -45,29 +45,29 @@ function Header({ user }) {
                 />
               </Link>
             )}
+          </Grid2>
+          <Grid2 size={{ xs: 3, sm: 1 }} style={{ textAlign: 'right' }}>
+            {user ? (
+              <div style={{ whiteSpace: ' nowrap' }}>
+                {user.avatarUrl ? (
+                  <MenuWithAvatar
+                    options={optionsMenu}
+                    src={user.avatarUrl}
+                    alt={user.displayName}
+                  />
+                ) : null}
+              </div>
+            ) : (
+              <Link href="/login" style={{ margin: '0px 20px 0px auto' }}>
+                Log in
+              </Link>
+            )}
+          </Grid2>
         </Grid2>
-        <Grid2 size={{ xs: 3, sm: 1 }} style={{ textAlign: 'right'}}>
-          {user ? (
-            <div style={{ whiteSpace: ' nowrap' }}>
-              {user.avatarUrl ? (
-                <MenuWithAvatar 
-                  options={optionsMenu} 
-                  src={user.avatarUrl} 
-                  alt={user.displayName} 
-                />
-              ) : null}
-            </div>
-          ) : (
-            <Link href="/login" style={{ margin: '0px 20px 0px auto' }}>
-              Log in
-            </Link>
-          )}
-        </Grid2>
-      </Grid2>
-    </Toolbar>
-  </div>
-);
-}
+      </Toolbar>
+    </div>
+  );
+};
 
 Header.propTypes = propTypes;
 Header.defaultProps = defaultProps;

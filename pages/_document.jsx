@@ -26,7 +26,6 @@ class MyDocument extends Document {
 
     ctx.renderPage = () =>
       originalRenderPage({
-        // eslint-disable-next-line react/display-name
         enhanceApp: (App) => (props) => <App emotionCache={cache} {...props} />,
       });
 
@@ -37,7 +36,6 @@ class MyDocument extends Document {
       <style
         data-emotion={`${style.key} ${style.ids.join(' ')}`}
         key={style.key}
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: style.css }}
       />
     ));
@@ -79,6 +77,10 @@ class MyDocument extends Document {
             href="https://storage.googleapis.com/builderbook/nprogress.min.css"
           />
           <link rel="stylesheet" href="https://storage.googleapis.com/builderbook/vs.min.css" />
+          <link
+            rel="stylesheet"
+            href="https://storage.googleapis.com/builderbook/nprogress.min.css"
+          />
           <style>
             {`
                 a {

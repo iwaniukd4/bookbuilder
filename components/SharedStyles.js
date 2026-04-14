@@ -22,7 +22,7 @@ const styleLoginButton = {
   fontWeight: '400',
   letterSpacing: '0.01em',
   color: 'white',
-  backgroundColor: '#DF4930',
+  backgroundColor: '#4285f4',
 };
 
 const styleTextField = {

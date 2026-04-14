@@ -1,3 +1,4 @@
+const setupGoogle = require('./google');
 const express = require('express');
 const next = require('next');
 
@@ -5,8 +6,6 @@ const mongoose = require('mongoose');
 
 const session = require('express-session');
 const mongoSessionStore = require('connect-mongo');
-
-const User = require('./models/User');
 
 require('dotenv').config();
 
@@ -43,12 +42,13 @@ app.prepare().then(() => {
   const sessionMiddleware = session(sessionOptions);
   server.use(sessionMiddleware);
 
-  server.get('/', async (req, res) => {
+  /*server.get('/', async (req, res) => {
     //const user = JSON.stringify(await User.findOne({ slug: 'team-builder-book' }));
     const user = await User.findOne({ slug: 'team-builder-book' });
     req.user = user;
     app.render(req, res, '/');
-  });
+  });*/
+  setupGoogle({ server, ROOT_URL });
 
   server.get('*', (req, res) => handle(req, res));
 
