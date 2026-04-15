@@ -1,4 +1,5 @@
 const setupGoogle = require('./google');
+const { insertTemplates } = require('./models/EmailTemplate');
 const express = require('express');
 const next = require('next');
 
@@ -20,7 +21,7 @@ const MONGO_URL = process.env.MONGO_URL_TEST;
 
 mongoose.connect(MONGO_URL);
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
   const server = express();
 
   const sessionOptions = {
@@ -48,6 +49,8 @@ app.prepare().then(() => {
     req.user = user;
     app.render(req, res, '/');
   });*/
+  await insertTemplates();
+
   setupGoogle({ server, ROOT_URL });
 
   server.get('*', (req, res) => handle(req, res));
