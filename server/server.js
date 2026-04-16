@@ -8,7 +8,16 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const mongoSessionStore = require('connect-mongo');
 
+const api = require('./api');
+
 require('dotenv').config();
+
+//const Chapter = require('./models/Chapter');
+
+const URL_MAP = {
+  '/login': '/public/login',
+  '/my-books': '/customer/my-books',
+};
 
 const port = process.env.PORT || 8000;
 const ROOT_URL = `http://localhost:${port}`;
@@ -52,8 +61,21 @@ app.prepare().then(async () => {
   await insertTemplates();
 
   setupGoogle({ server, ROOT_URL });
+  api(server);
 
-  server.get('*', (req, res) => handle(req, res));
+  server.get('/books/:bookSlug/:chapterSlug', (req, res) => {
+    const { bookSlug, chapterSlug } = req.params;
+    app.render(req, res, '/public/read-chapter', { bookSlug, chapterSlug });
+  });
+
+  server.get('*', (req, res) => {
+    const url = URL_MAP[req.path];
+    if (url) {
+      app.render(req, res, url);
+    } else {
+      handle(req, res);
+    }
+  });
 
   server.listen(port, (err) => {
     if (err) throw err;

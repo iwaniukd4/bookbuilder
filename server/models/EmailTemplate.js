@@ -38,16 +38,16 @@ async function insertTemplates() {
   const templates = [
     {
       name: 'welcome',
-      subject: 'Welcome to builderbook.org',
+      subject: 'Welcome to bookbuilder.com',
       message: `<%= userName %>,
         <p>
-          Thanks for signing up for Builder Book!
+          Thanks for signing up for BookBuilder!
         </p>
         <p>
           In our books, we teach you how to build complete, production-ready web apps from scratch.
         </p>
 
-        Kelly & Tim, Team Builder Book
+        BookBuilder Team
       `,
     },
   ];
