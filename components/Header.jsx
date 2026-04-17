@@ -7,10 +7,24 @@ import Avatar from '@mui/material/Avatar';
 import { styleToolbar } from './SharedStyles';
 import MenuWithAvatar from './MenuWithAvatar';
 
-const optionsMenu = [
+const optionsMenuCustomer = [
   {
-    text: 'Got question?',
-    href: 'https://github.com/async-labs/builderbook/issues',
+    text: 'My books',
+    href: '/customer/my-books',
+    as: '/my-books',
+  },
+  {
+    text: 'Log out',
+    href: '/logout',
+    anchor: true,
+  },
+];
+
+const optionsMenuAdmin = [
+  {
+    text: 'Admin',
+    href: '/admin',
+    as: '/admin',
   },
   {
     text: 'Log out',
@@ -46,12 +60,30 @@ const Header = ({ user }) => {
               </Link>
             )}
           </Grid2>
+          <Grid2 size={{ xs: 2, sm: 2 }} style={{ textAlign: 'right' }}>
+            {user && user.isAdmin && !user.isGithubConnected ? (
+              <Hidden mdDown>
+                <Link href="/auth/github">
+                  <Button variant="contained" color="primary">
+                    Connect Github
+                  </Button>
+                </Link>
+              </Hidden>
+            ) : null}
+          </Grid2>
           <Grid2 size={{ xs: 3, sm: 1 }} style={{ textAlign: 'right' }}>
             {user ? (
               <div style={{ whiteSpace: ' nowrap' }}>
-                {user.avatarUrl ? (
+                {!user.isAdmin ? (
                   <MenuWithAvatar
-                    options={optionsMenu}
+                    options={optionsMenuCustomer}
+                    src={user.avatarUrl}
+                    alt={user.displayName}
+                  />
+                ) : null}
+                {user.isAdmin ? (
+                  <MenuWithAvatar
+                    options={optionsMenuAdmin}
                     src={user.avatarUrl}
                     alt={user.displayName}
                   />
