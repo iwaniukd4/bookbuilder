@@ -73,10 +73,15 @@ function setupGoogle({ ROOT_URL, server }) {
 
   server.get(
     '/oauth2callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
+    passport.authenticate('google', {
+      failureRedirect: '/login',
+    }),
     (req, res) => {
-      // 2. if successful, redirect user to Index page (`/`)
-      res.redirect('/admin');
+      if (req.user && req.user.isAdmin) {
+        res.redirect('/admin');
+      } else {
+        res.redirect('/my-books');
+      }
     },
   );
 

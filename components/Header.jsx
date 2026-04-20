@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Toolbar from '@mui/material/Toolbar';
 import Grid2 from '@mui/material/Grid2';
 import Avatar from '@mui/material/Avatar';
+import { Hidden } from '@mui/material';
+import Button from '@mui/material/Button';
 
 import { styleToolbar } from './SharedStyles';
 import MenuWithAvatar from './MenuWithAvatar';

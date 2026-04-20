@@ -72,7 +72,7 @@ class BookDetail extends React.Component {
           Repo on Github
         </a>
         <p />
-        <Button variant="contained" onClick={this.handleSyncContent()}>
+        <Button variant="contained" onClick={() => this.handleSyncContent()}>
           Sync with Github
         </Button>
         <Link href={`/admin/edit-book?slug=${book.slug}`} as={`/admin/edit-book/${book.slug}`}>
@@ -85,7 +85,7 @@ class BookDetail extends React.Component {
                 as={`/books/${book.slug}/${ch.slug}`}
                 href={`/public/read-chapter?bookSlug=${book.slug}&chapterSlug=${ch.slug}`}
               >
-                <a>{ch.title}</a>
+                {ch.title}
               </Link>
             </li>
           ))}
@@ -97,4 +97,4 @@ class BookDetail extends React.Component {
 
 BookDetail.propTypes = propTypes;
 
-export default withAuth(BookDetail);
+export default withAuth(BookDetail, { adminRequired: true });

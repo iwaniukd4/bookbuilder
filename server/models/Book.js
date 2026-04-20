@@ -25,6 +25,13 @@ const mongoSchema = new Schema({
     type: Number,
     required: true,
   },
+  githubRepo: {
+    type: String,
+    required: true,
+  },
+  githubLastCommitSha: {
+    type: String,
+  },
 });
 
 class BookClass {
@@ -86,6 +93,10 @@ class BookClass {
 
     if (!book) {
       throw new Error('Book not found');
+    }
+
+    if (!book.githubRepo) {
+      throw new Error('Book has no GitHub repository configured');
     }
 
     const repoCommits = await getCommits({

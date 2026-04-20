@@ -1,7 +1,9 @@
 const setupGoogle = require('./google');
+const { setupGithub } = require('./github');
 const { insertTemplates } = require('./models/EmailTemplate');
 const express = require('express');
 const next = require('next');
+const routesWithSlug = require('./routesWithSlug');
 
 const mongoose = require('mongoose');
 
@@ -52,6 +54,8 @@ app.prepare().then(async () => {
   const sessionMiddleware = session(sessionOptions);
   server.use(sessionMiddleware);
 
+  server.use(express.json());
+
   /*server.get('/', async (req, res) => {
     //const user = JSON.stringify(await User.findOne({ slug: 'team-builder-book' }));
     const user = await User.findOne({ slug: 'team-builder-book' });
@@ -61,13 +65,9 @@ app.prepare().then(async () => {
   await insertTemplates();
 
   setupGoogle({ server, ROOT_URL });
+  await setupGithub({ server, ROOT_URL });
   api(server);
-
-  server.get('/books/:bookSlug/:chapterSlug', (req, res) => {
-    const { bookSlug, chapterSlug } = req.params;
-    app.render(req, res, '/public/read-chapter', { bookSlug, chapterSlug });
-  });
-
+  routesWithSlug({ server, app });
   server.get('*', (req, res) => {
     const url = URL_MAP[req.path];
     if (url) {

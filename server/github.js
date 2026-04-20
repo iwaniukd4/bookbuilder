@@ -1,6 +1,15 @@
-const { Octokit } = require('@octokit/rest');
-const fetch = require('node-fetch');
-const { oauthAuthorizationUrl } = require('@octokit/oauth-authorization-url');
+let Octokit;
+let fetch;
+let oauthAuthorizationUrl;
+
+async function initImports() {
+  if (!Octokit) {
+    ({ Octokit } = await import('@octokit/rest'));
+    fetch = (await import('node-fetch')).default;
+    ({ oauthAuthorizationUrl } = await import('@octokit/oauth-authorization-url'));
+  }
+}
+
 const _ = require('lodash');
 
 const User = require('./models/User');
@@ -11,7 +20,9 @@ const dev = process.env.NODE_ENV !== 'production';
 const CLIENT_ID = dev ? process.env.GITHUB_TEST_CLIENTID : process.env.GITHUB_LIVE_CLIENTID;
 const API_KEY = dev ? process.env.GITHUB_TEST_SECRETKEY : process.env.GITHUB_LIVE_SECRETKEY;
 
-function setupGithub({ server, ROOT_URL }) {
+async function setupGithub({ server, ROOT_URL }) {
+  await initImports();
+
   const verify = async ({ user, accessToken, profile }) => {
     const modifier = {
       githubId: profile.id,
@@ -110,7 +121,9 @@ function setupGithub({ server, ROOT_URL }) {
   });
 }
 
-function getAPI({ user, previews = [], request }) {
+async function getAPI({ user, previews = [], request }) {
+  await initImports();
+
   const github = new Octokit({
     auth: user.githubAccessToken,
     request: { timeout: 10000 },
@@ -129,8 +142,8 @@ function getAPI({ user, previews = [], request }) {
   return github;
 }
 
-function getRepos({ user, request }) {
-  const github = getAPI({ user, request });
+async function getRepos({ user, request }) {
+  const github = await getAPI({ user, request });
 
   return github.repos.listForAuthenticatedUser({
     visibility: 'private',
@@ -139,15 +152,15 @@ function getRepos({ user, request }) {
   });
 }
 
-function getRepoDetail({ user, repoName, request, path }) {
-  const github = getAPI({ user, request });
+async function getRepoDetail({ user, repoName, request, path }) {
+  const github = await getAPI({ user, request });
   const [owner, repo] = repoName.split('/');
 
   return github.repos.getContent({ owner, repo, path });
 }
 
-function getCommits({ user, repoName, request }) {
-  const github = getAPI({ user, request });
+async function getCommits({ user, repoName, request }) {
+  const github = await getAPI({ user, request });
   const [owner, repo] = repoName.split('/');
 
   return github.repos.listCommits({ owner, repo });
