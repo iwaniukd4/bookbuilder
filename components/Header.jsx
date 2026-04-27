@@ -39,16 +39,28 @@ const propTypes = {
   user: PropTypes.shape({
     avatarUrl: PropTypes.string,
     displayName: PropTypes.string,
+    isAdmin: PropTypes.bool,
+    isGithubConnected: PropTypes.bool,
   }),
+  hideHeader: PropTypes.bool,
 };
 
 const defaultProps = {
   user: null,
+  hideHeader: false,
 };
 
-const Header = ({ user }) => {
+const Header = ({ user, hideHeader }) => {
   return (
-    <div>
+    <div
+      style={{
+        overflow: 'hidden',
+        position: 'relative',
+        display: 'block',
+        top: hideHeader ? '-64px' : '0px',
+        transition: 'top 0.5s ease-in',
+      }}
+    >
       <Toolbar style={styleToolbar}>
         <Grid2 container direction="row" justifyContent="space-around" alignItems="center">
           <Grid2 size={{ xs: 9, sm: 11 }} style={{ textAlign: 'left' }}>

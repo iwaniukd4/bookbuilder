@@ -42,7 +42,7 @@ class MyApp extends App {
             />
           </Head>
           <CssBaseline />
-          <Header {...pageProps} />
+          {pageProps.chapter ? null : <Header {...pageProps} />}
           <Component {...pageProps} />
           <Notifier />
         </ThemeProvider>
