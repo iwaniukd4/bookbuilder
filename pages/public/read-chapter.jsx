@@ -50,6 +50,7 @@ class ReadChapter extends React.Component {
       htmlContent,
       hideHeader: false,
       isMobile: false,
+      activeSection: null,
     };
   }
 
@@ -179,7 +180,7 @@ class ReadChapter extends React.Component {
     const { activeSection } = this.state;
     console.log(activeSection);
 
-    if (!sections || !sections.length === 0) {
+    if (!sections || sections.length === 0) {
       return null;
     }
 

@@ -22,14 +22,14 @@ function markdownToHtml(content) {
     alt="Builder Book"
   >`;
 
-  renderer.heading = ({ text }, level) => {
+  renderer.heading = ({ text, depth }) => {
     const escapedText = text
       .trim()
       .toLowerCase()
       .replace(/[^\w]+/g, '-');
 
-    if (level === 2) {
-      return `<h${level} class="chapter-section" style="color: #222; font-weight: 400;">
+    if (depth === 2) {
+      return `<h${depth} class="chapter-section" style="color: #222; font-weight: 400;">
         <a
           name="${escapedText}"
           href="#${escapedText}"
@@ -40,11 +40,11 @@ function markdownToHtml(content) {
         <span class="section-anchor" name="${escapedText}">
           ${text}
         </span>
-      </h${level}>`;
+      </h${depth}>`;
     }
 
-    if (level === 4) {
-      return `<h${level} style="color: #222;">
+    if (depth === 4) {
+      return `<h${depth} style="color: #222;">
         <a
           name="${escapedText}"
           href="#${escapedText}"
@@ -53,10 +53,10 @@ function markdownToHtml(content) {
           <i class="material-icons" style="vertical-align: middle; opacity: 0.5; cursor: pointer;">link</i>
         </a>
         ${text}
-      </h${level}>`;
+      </h${depth}>`;
     }
 
-    return `<h${level} style="color: #222; font-weight: 400;">${text}</h${level}>`;
+    return `<h${depth} style="color: #222; font-weight: 400;">${text}</h${depth}>`;
   };
 
   marked.setOptions({
@@ -79,8 +79,8 @@ function getSections(content) {
 
   const sections = [];
 
-  renderer.heading = ({ text }, level) => {
-    if (level !== 2) {
+  renderer.heading = ({ text, depth }) => {
+    if (depth !== 2) {
       return;
     }
 
@@ -89,7 +89,7 @@ function getSections(content) {
       .toLowerCase()
       .replace(/[^\w]+/g, '-');
 
-    sections.push({ text, level, escapedText });
+    sections.push({ text, level: depth, escapedText });
   };
 
   marked.setOptions({
