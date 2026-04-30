@@ -7,6 +7,7 @@ import throttle from 'lodash/throttle';
 import Link from 'next/link';
 
 import Header from '../../components/Header';
+import BuyButton from '../../components/customer/BuyButton';
 
 import { getChapterDetailApiMethod } from '../../lib/api/public';
 import withAuth from '../../lib/withAuth';
@@ -40,8 +41,10 @@ class ReadChapter extends React.Component {
     const { chapter } = props;
 
     let htmlContent = '';
-    if (chapter) {
+    if (chapter && (chapter.isPurchased || chapter.isFree)) {
       htmlContent = chapter.htmlContent;
+    } else {
+      htmlContent = chapter.htmlExcerpt;
     }
 
     this.state = {
@@ -60,17 +63,30 @@ class ReadChapter extends React.Component {
     const isMobile = window.innerWidth < 768;
 
     if (this.state.isMobile !== isMobile) {
-      this.setState({ isMobile });
+    this.setState({ isMobile }); // eslint-disable-line
+    }
+
+    if (this.props.checkoutCanceled) {
+      notify('Checkout canceled.');
+    }
+
+    if (this.props.error) {
+      notify(this.props.error);
     }
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.chapter && prevProps.chapter._id !== this.props.chapter._id) {
       document.getElementById('chapter-content').scrollIntoView();
+      let htmlContent = '';
+      if (prevProps.chapter && (prevProps.chapter.isPurchased || prevProps.chapter.isFree)) {
+        htmlContent = this.props.chapter.htmlContent;
+      } else {
+        htmlContent = this.props.chapter.htmlExcerpt;
+      }
 
-      const { htmlContent } = this.props.chapter;
-
-      this.setState({ chapter: this.props.chapter, htmlContent });
+      // eslint-disable-next-line
+    this.setState({ chapter: this.props.chapter, htmlContent });
     }
   }
 
@@ -132,7 +148,7 @@ class ReadChapter extends React.Component {
   };
 
   static async getInitialProps(ctx) {
-    const { bookSlug, chapterSlug } = ctx.query;
+    const { bookSlug, chapterSlug, buy, checkout_canceled, error } = ctx.query;
     const { req } = ctx;
 
     const headers = {};
@@ -140,9 +156,11 @@ class ReadChapter extends React.Component {
       headers.cookie = req.headers.cookie;
     }
 
-    const chapter = await getChapterDetailApiMethod({ bookSlug, chapterSlug }, { headers });
+    const chapter = await getChapterDetail({ bookSlug, chapterSlug }, { headers });
 
-    return { chapter };
+    const redirectToCheckout = !!buy;
+
+    return { chapter, redirectToCheckout, checkoutCanceled: !!checkout_canceled, error };
   }
 
   toggleChapterList = () => {
@@ -169,7 +187,13 @@ class ReadChapter extends React.Component {
           {chapter.order > 1 ? `Chapter ${chapter.order - 1}: ` : null}
           {chapter.title}
         </h2>
+        {!chapter.isPurchased && !chapter.isFree ? (
+          <BuyButton user={user} book={book} redirectToCheckout={redirectToCheckout} />
+        ) : null}
         <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+        {!chapter.isPurchased && !chapter.isFree ? (
+          <BuyButton user={user} book={book} redirectToCheckout={redirectToCheckout} />
+        ) : null}
       </div>
     );
   }
