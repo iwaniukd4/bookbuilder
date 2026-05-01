@@ -37,6 +37,7 @@ function setupGoogle({ ROOT_URL, server }) {
         clientID: process.env.GOOGLE_CLIENTID,
         clientSecret: process.env.GOOGLE_CLIENTSECRET,
         callbackURL: `${ROOT_URL}/oauth2callback`,
+        userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
       },
       verify,
     ),
@@ -62,14 +63,20 @@ function setupGoogle({ ROOT_URL, server }) {
   server.use(passport.session());
 
   // 5. Define Express routes (/auth/google, /oauth2callback, /logout)
-  server.get(
-    '/auth/google',
+  server.get('/auth/google', (req, res, next) => {
+    console.log(`req.query.redirectUrl:${req.query.redirectUrl}`);
+
+    if (req.query && req.query.redirectUrl && req.query.redirectUrl.startsWith('/')) {
+      req.session.finalUrl = req.query.redirectUrl;
+    } else {
+      req.session.finalUrl = null;
+    }
+    console.log(`before callback req.session.finalUrl:${req.session.finalUrl}`);
     passport.authenticate('google', {
-      // 1. pass options to passport.authenticate
       scope: ['profile', 'email'],
       prompt: 'select_account',
-    }),
-  );
+    })(req, res, next);
+  });
 
   server.get(
     '/oauth2callback',
@@ -77,8 +84,11 @@ function setupGoogle({ ROOT_URL, server }) {
       failureRedirect: '/login',
     }),
     (req, res) => {
+      console.log(`after callback req.session.finalUrl:${req.session.finalUrl}`);
       if (req.user && req.user.isAdmin) {
         res.redirect('/admin');
+      } else if (req.user && req.session.finalUrl) {
+        res.redirect(`${ROOT_URL}${req.session.finalUrl}`);
       } else {
         res.redirect('/my-books');
       }

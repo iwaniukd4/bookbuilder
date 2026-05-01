@@ -11,6 +11,7 @@ import BuyButton from '../../components/customer/BuyButton';
 
 import { getChapterDetailApiMethod } from '../../lib/api/public';
 import withAuth from '../../lib/withAuth';
+import { withRouter } from 'next/router';
 
 const styleIcon = {
   opacity: '0.75',
@@ -21,17 +22,27 @@ const styleIcon = {
 const propTypes = {
   chapter: PropTypes.shape({
     _id: PropTypes.string.isRequired,
+    isPurchased: PropTypes.bool,
+    isFree: PropTypes.bool.isRequired,
     htmlContent: PropTypes.string,
     htmlExcerpt: PropTypes.string,
   }),
   user: PropTypes.shape({
     _id: PropTypes.string.isRequired,
   }),
+  router: PropTypes.shape({
+    asPath: PropTypes.string.isRequired,
+  }).isRequired,
+  redirectToCheckout: PropTypes.bool.isRequired,
+  checkoutCanceled: PropTypes.bool,
+  error: PropTypes.string,
 };
 
 const defaultProps = {
   chapter: null,
   user: null,
+  checkoutCanceled: false,
+  error: '',
 };
 
 class ReadChapter extends React.Component {
@@ -279,7 +290,7 @@ class ReadChapter extends React.Component {
   }
 
   render() {
-    const { user } = this.props;
+    const { user, router } = this.props;
 
     const { chapter, showTOC, hideHeader, isMobile } = this.state;
 
@@ -305,7 +316,7 @@ class ReadChapter extends React.Component {
           ) : null}
         </Head>
 
-        <Header user={user} hideHeader={hideHeader} />
+        <Header user={user} hideHeader={hideHeader} redirectUrl={router.asPath} />
 
         {this.renderSidebar()}
 
@@ -381,4 +392,4 @@ ReadChapter.defaultProps = defaultProps;
 
 // see our explanation for not using getServerSideProps at this time: https://github.com/async-labs/builderbook/issues/514
 
-export default withAuth(ReadChapter, { loginRequired: false });
+export default withAuth(withRouter(ReadChapter), { loginRequired: false });
