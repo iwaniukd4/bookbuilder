@@ -1,4 +1,5 @@
 const setupGoogle = require('./google');
+const { stripeCheckoutCallback } = require('./stripe');
 const { setupGithub } = require('./github');
 const { insertTemplates } = require('./models/EmailTemplate');
 const express = require('express');
@@ -68,6 +69,9 @@ app.prepare().then(async () => {
   await setupGithub({ server, ROOT_URL });
   api(server);
   routesWithSlug({ server, app });
+
+  stripeCheckoutCallback({ server });
+
   server.get('*', (req, res) => {
     const url = URL_MAP[req.path];
     if (url) {

@@ -89,7 +89,7 @@ function stripeCheckoutCallback({ server }) {
       } else {
         throw new Error('Wrong session.');
       }
-
+      console.log('Redirecting to:', session.metadata.redirectUrl);
       res.redirect(`${ROOT_URL}${session.metadata.redirectUrl}`);
     } catch (err) {
       console.error(err);

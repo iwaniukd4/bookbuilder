@@ -156,7 +156,7 @@ class ReadChapter extends React.Component {
       headers.cookie = req.headers.cookie;
     }
 
-    const chapter = await getChapterDetail({ bookSlug, chapterSlug }, { headers });
+    const chapter = await getChapterDetailApiMethod({ bookSlug, chapterSlug }, { headers });
 
     const redirectToCheckout = !!buy;
 
@@ -172,7 +172,9 @@ class ReadChapter extends React.Component {
   };
 
   renderMainContent() {
+    const { user, redirectToCheckout } = this.props;
     const { chapter, htmlContent, showTOC, isMobile } = this.state;
+    const { book } = chapter;
 
     let padding = '20px 20%';
     if (!isMobile && showTOC) {

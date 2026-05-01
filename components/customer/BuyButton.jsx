@@ -19,7 +19,9 @@ const ROOT_URL = `http://localhost:${port}`;
 
 // define stripePromise
 const stripePromise = loadStripe(
-  dev ? NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY : NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY,
+  dev
+    ? process.env.NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLEKEY
+    : process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLEKEY,
 );
 
 // define propTypes
