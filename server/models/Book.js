@@ -5,7 +5,7 @@ const generateSlug = require('../utils/slugify');
 const User = require('./User');
 const Purchase = require('./Purchase');
 
-//const { addToMailchimp } = require('../mailchimp');
+const { addToMailchimp } = require('../mailchimp');
 const { getCommits, getRepoDetail } = require('../github');
 // const Chapter = require('./Chapter');
 
@@ -183,7 +183,7 @@ class BookClass {
     User.findByIdAndUpdate(user._id, { $addToSet: { purchasedBookIds: book._id } }).exec();
 
     try {
-      //await addToMailchimp({ email: user.email, listName: 'purchased' });
+      await addToMailchimp({ email: user.email, listName: 'purchased' });
     } catch (error) {
       console.error('Buy book error:', error);
     }
