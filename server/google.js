@@ -71,10 +71,15 @@ function setupGoogle({ ROOT_URL, server }) {
     } else {
       req.session.finalUrl = null;
     }
+
+    // FinalUrl needs to be stored as state in session or it will be lost after redirecting to Google for authentication
+    const state = req.session.finalUrl ? Buffer.from(req.session.finalUrl).toString('base64') : '';
+
     console.log(`before callback req.session.finalUrl:${req.session.finalUrl}`);
     passport.authenticate('google', {
       scope: ['profile', 'email'],
       prompt: 'select_account',
+      state,
     })(req, res, next);
   });
 
@@ -84,6 +89,13 @@ function setupGoogle({ ROOT_URL, server }) {
       failureRedirect: '/login',
     }),
     (req, res) => {
+      if (req.query.state) {
+        try {
+          req.session.finalUrl = Buffer.from(req.query.state, 'base64').toString('utf-8');
+        } catch (e) {
+          console.error('Invalid state');
+        }
+      }
       console.log(`after callback req.session.finalUrl:${req.session.finalUrl}`);
       if (req.user && req.user.isAdmin) {
         res.redirect('/admin');
